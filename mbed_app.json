@@ -5,7 +5,10 @@
             "platform.stdio-baud-rate": 115200,
             "platform.default-serial-baud-rate": 115200,
             "mbed-trace.enable": false,
-            "mbed-trace.max-level": "TRACE_LEVEL_DEBUG"
+            "mbed-trace.max-level": "TRACE_LEVEL_DEBUG",
+            "lora.duty-cycle-on": true,
+            "lora.phy": "US915",
+            "rtos-api.present": true
         },
 
         "NUCLEO_F401RE": {
@@ -14,9 +17,11 @@
             "sx1276-lora-driver.spi-miso":       "ARDUINO_UNO_D12",
             "sx1276-lora-driver.spi-sclk":       "ARDUINO_UNO_D13",
             "sx1276-lora-driver.spi-cs":         "ARDUINO_UNO_D10",
-            "sx1276-lora-driver.reset":          "ARDUINO_UNO_D2",
+            "sx1276-lora-driver.reset":          "ARDUINO_UNO_A0",
             "sx1276-lora-driver.txctl":          "ARDUINO_UNO_D9",
-            "sx1276-lora-driver.rxctl":          "ARDUINO_UNO_D8"
+            "sx1276-lora-driver.rxctl":          "ARDUINO_UNO_D8",
+            "sx1276-lora-driver.dio0":           "ARDUINO_UNO_D7",
+            "sx1276-lora-driver.dio1":           "ARDUINO_UNO_D6"
         }
     }
 }

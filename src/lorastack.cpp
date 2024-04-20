@@ -7,67 +7,18 @@
 LoRaStack::LoRaStack() {
     _radio = &radio;
 
-    printf("\nsetting rx config\n");
-    radio.set_rx_config(MODEM_LORA, 1 /* 256 kHz */, 8 /* 256 bps */,
-                        2 /* 4/6 */, 0 /* FSK only */, 0 /* 0 sym preamble */,
-                        1024 /* 1024 symbol timeout */,
-                        0 /* variable len packets */, 0 /* variable */,
-                        0 /* CRC off */, 0 /* freq hopping off */,
-                        0 /* 0 syms between hops */, 0 /* IQ not inverted */,
-                        1 /* continuous rx */);
-
-    printf("\nsetting tx config\n");
-    radio.set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
-                        1 /* 256 kHz */, 8 /* 256 bps */, 2 /* 4/6 */,
-                        0 /* 0 sym preamble */, 0 /* variable len packets */,
-                        0 /* CRC off */, 0 /* freq hopping off */,
-                        0 /* 0 syms between hops */, 0 /* IQ not inverted */,
-                        100 /* 100 ms timeout */);
-
     printf("\nsetting up radio events\n");
     // setting up callbakcs in radio_events_t
     radio_events.tx_done =
         mbed::callback(this, &LoRaStack::tx_interrupt_handler);
-    radio_events.rx_done =
+    /*radio_events.rx_done =
         mbed::callback(this, &LoRaStack::rx_interrupt_handler);
     radio_events.rx_error =
-        mbed::callback(this, &LoRaStack::rx_error_interrupt_handler);
+        mbed::callback(this, &LoRaStack::rx_error_interrupt_handler);*/
     radio_events.tx_timeout =
         mbed::callback(this, &LoRaStack::tx_timeout_interrupt_handler);
-    radio_events.rx_timeout =
-        mbed::callback(this, &LoRaStack::rx_timeout_interrupt_handler);
-
-    _default_phy = new LoRaPHYUS915();
-
-    cw_mode_params_t params = {
-        /*!
-        * The current channel index.
-        */
-        0,
-        /*!
-        * The datarate. Used to limit the TX power.
-        */
-        8,
-        /*!
-        * The TX power to set up.
-        */
-        30,
-        /*!
-        * The max EIRP, if applicable.
-        */
-        0,
-        /*!
-        * The antenna gain, if applicable.
-        */
-        0,
-        /*!
-        * Specifies the time the radio will stay in CW mode.
-        */
-        10000,
-    };
-
-    _default_phy->set_radio_instance(radio);
-    _loramac.bind_phy(*_default_phy);
+    /*radio_events.rx_timeout =
+        mbed::callback(this, &LoRaStack::rx_timeout_interrupt_handler);*/
 
     radio.lock();
     // actual initialization of the radio driver with the radio_events_t
@@ -75,7 +26,24 @@ LoRaStack::LoRaStack() {
     radio.unlock();
 
     printf("\n radio initialized! \n");
-    _default_phy->set_tx_cont_mode(&params, 902300000);
+    // printf("\nsetting rx config\n");
+    // radio.set_rx_config(MODEM_LORA, 1 /* 256 kHz */, 4 /* 128 bps */,
+    //                     2 /* 4/6 */, 0 /* FSK only */, 0 /* 0 sym preamble */,
+    //                     1024 /* 1024 symbol timeout */,
+    //                     0 /* variable len packets */, 0 /* variable */,
+    //                     0 /* CRC off */, 0 /* freq hopping off */,
+    //                     0 /* 0 syms between hops */, 0 /* IQ not inverted */,
+    //                     1 /* continuous rx */);
+
+    // printf("\nsetting tx config\n");
+    // radio.set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
+    //                     1 /* 256 kHz */, 4 /* 128 bps */, 2 /* 4/6 */,
+    //                     0 /* 0 sym preamble */, 0 /* variable len packets */,
+    //                     0 /* CRC off */, 0 /* freq hopping off */,
+    //                     0 /* 0 syms between hops */, 0 /* IQ not inverted */,
+    //                     100 /* 100 ms timeout */);
+
+    printf("freq good? %d\n", radio.check_rf_frequency(915000000));
 }
 
 /*****************************************************************************
@@ -86,6 +54,7 @@ void LoRaStack::tx_interrupt_handler(void) {
     // const int ret = _queue->call(this, &LoRaStack::process_transmission);
     // MBED_ASSERT(ret != 0);
     // (void)ret;
+    printf("TX DONE\n");
 }
 
 void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
@@ -121,6 +90,7 @@ void LoRaStack::tx_timeout_interrupt_handler(void) {
     //     _queue->call(this, &LoRaStack::process_transmission_timeout);
     // MBED_ASSERT(ret != 0);
     // (void)ret;
+    printf("TX TIMED OUT\n");
 }
 
 void LoRaStack::rx_timeout_interrupt_handler(void) {
@@ -131,3 +101,12 @@ void LoRaStack::rx_timeout_interrupt_handler(void) {
 }
 
 uint8_t LoRaStack::get_radio_status(void) { return _radio->get_status(); }
+
+void LoRaStack::send_bs(void) { 
+    uint8_t buf[6] = "urmom";
+    _radio->send(buf, 6);
+}
+
+void LoRaStack::send_cont_wave(void) {
+    _radio->set_tx_continuous_wave(915000000, TX_POWER_5, 0.5);
+}

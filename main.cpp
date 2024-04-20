@@ -17,18 +17,21 @@ int main(void) {
     LoRaStack *stack = new LoRaStack();
 
     while (1) {
-        printf("STATUS: ");
-        switch (stack->get_radio_status()) {
-        case 0:
-            printf("IDLE\n");
-            break;
-        case 1:
-            printf("RX_RUNNING\n");
-            break;
-        case 2:
-            printf("TX_RUNNING\n");
-            break;
-        }
+        // printf("STATUS: ");
+        // switch (stack->get_radio_status()) {
+        // case 0:
+        //     printf("IDLE\n");
+        //     break;
+        // case 1:
+        //     printf("RX_RUNNING\n");
+        //     break;
+        // case 2:
+        //     printf("TX_RUNNING\n");
+        //     break;
+        // }
+
+        stack->send_cont_wave(); //0.5s
+
         ThisThread::sleep_for(1s);
     }
     return 0;
