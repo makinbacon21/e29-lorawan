@@ -1,0 +1,9 @@
+# [WIP] Pure LoRa Weather Station
+
+This project is for Thomas Makin and Xezel Peshlakai's final Swarthmore College ENGR 029 project. The end goal is to produce both a weather station and receiver based on the STMicroelectronics Nucleo STM32-based platform, communicating via packetized LoRa.
+
+## Platform
+
+- 2x STM Nucleo F401RE boards
+- 1x SparkFun SPX1276 Semtech 1276-based transceiver (for base station)
+- 1x Adafruit RFM9x Semtech 1276-based transceiver (for receiver)
