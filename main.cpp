@@ -16,6 +16,10 @@ int main(void) {
 
     LoRaStack *stack = new LoRaStack();
 
+    stack->setup_rx();
+
+    //stack->setup_tx();
+
     while (1) {
         // printf("STATUS: ");
         // switch (stack->get_radio_status()) {
@@ -30,9 +34,11 @@ int main(void) {
         //     break;
         // }
 
-        stack->send_cont_wave(); //0.5s
+        // stack->send_cont_wave(); //0.5s
+        //stack->send_bs();
+        stack->receive();
 
-        ThisThread::sleep_for(1s);
+        ThisThread::sleep_for(3s);
     }
     return 0;
 }

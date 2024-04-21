@@ -38,14 +38,14 @@ LoRaStack::LoRaStack() {
     // setting up callbakcs in radio_events_t
     radio_events.tx_done =
         mbed::callback(this, &LoRaStack::tx_interrupt_handler);
-    /*radio_events.rx_done =
+    radio_events.rx_done =
         mbed::callback(this, &LoRaStack::rx_interrupt_handler);
     radio_events.rx_error =
-        mbed::callback(this, &LoRaStack::rx_error_interrupt_handler);*/
+        mbed::callback(this, &LoRaStack::rx_error_interrupt_handler);
     radio_events.tx_timeout =
         mbed::callback(this, &LoRaStack::tx_timeout_interrupt_handler);
-    /*radio_events.rx_timeout =
-        mbed::callback(this, &LoRaStack::rx_timeout_interrupt_handler);*/
+    radio_events.rx_timeout =
+        mbed::callback(this, &LoRaStack::rx_timeout_interrupt_handler);
 
     radio.lock();
     // actual initialization of the radio driver with the radio_events_t
@@ -53,24 +53,6 @@ LoRaStack::LoRaStack() {
     radio.unlock();
 
     printf("\n radio initialized! \n");
-    // printf("\nsetting rx config\n");
-    // radio.set_rx_config(MODEM_LORA, 1 /* 256 kHz */, 4 /* 128 bps */,
-    //                     2 /* 4/6 */, 0 /* FSK only */, 0 /* 0 sym preamble */,
-    //                     1024 /* 1024 symbol timeout */,
-    //                     0 /* variable len packets */, 0 /* variable */,
-    //                     0 /* CRC off */, 0 /* freq hopping off */,
-    //                     0 /* 0 syms between hops */, 0 /* IQ not inverted */,
-    //                     1 /* continuous rx */);
-
-    // printf("\nsetting tx config\n");
-    // radio.set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
-    //                     1 /* 256 kHz */, 4 /* 128 bps */, 2 /* 4/6 */,
-    //                     0 /* 0 sym preamble */, 0 /* variable len packets */,
-    //                     0 /* CRC off */, 0 /* freq hopping off */,
-    //                     0 /* 0 syms between hops */, 0 /* IQ not inverted */,
-    //                     100 /* 100 ms timeout */);
-
-    printf("freq good? %d\n", radio.check_rf_frequency(915000000));
 }
 
 /*****************************************************************************
@@ -86,12 +68,16 @@ void LoRaStack::tx_interrupt_handler(void) {
 
 void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
                                      int16_t rssi, int8_t snr) {
-    // if (size > sizeof _rx_payload ||
-    //     core_util_atomic_flag_test_and_set(&_rx_payload_in_use)) {
-    //     return;
-    // }
+    //char _rx_payload[8];
+    /*if (size > sizeof _rx_payload) {
+        return;
+    }*/
 
-    // memcpy(_rx_payload, payload, size);
+    //if(size < 8) {
+      //  return;
+    //}
+
+    //memcpy(_rx_payload, payload, size);
 
     // const uint8_t *ptr = _rx_payload;
     // const int ret =
@@ -101,8 +87,8 @@ void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
     // (void)ret;
 
     // TODO: check and fix payload formatter--maybe pad to int?
-    printf("\n PAYLOAD RECEIVED: payload <0x%02x> size<%d> rssi <%d> snr<%d>\n",
-           *payload, size, rssi, snr);
+    printf("\n PAYLOAD RECEIVED: payload <%s> size<%d> rssi <%d> snr<%d>\n",
+           payload, size, rssi, snr);
 }
 
 void LoRaStack::rx_error_interrupt_handler(void) {
@@ -110,6 +96,7 @@ void LoRaStack::rx_error_interrupt_handler(void) {
     //     _queue->call(this, &LoRaStack::process_reception_timeout, false);
     // MBED_ASSERT(ret != 0);
     // (void)ret;
+    printf("RX ERROR\n");
 }
 
 void LoRaStack::tx_timeout_interrupt_handler(void) {
@@ -121,6 +108,7 @@ void LoRaStack::tx_timeout_interrupt_handler(void) {
 }
 
 void LoRaStack::rx_timeout_interrupt_handler(void) {
+    printf("RX TIMED OUT\n");
     // const int ret =
     //     _queue->call(this, &LoRaStack::process_reception_timeout, true);
     // MBED_ASSERT(ret != 0);
@@ -129,9 +117,38 @@ void LoRaStack::rx_timeout_interrupt_handler(void) {
 
 uint8_t LoRaStack::get_radio_status(void) { return _radio->get_status(); }
 
+void LoRaStack::setup_tx(void) {
+    printf("\nsetting tx config\n");
+    _radio->set_channel(915000000);
+    _radio->set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
+                        0 /* 125 kHz */, 8 /* 256 bps */, 1 /* 4/5 */,
+                        0 /* 0 sym preamble */, false /* variable len packets */,
+                        true /* CRC on */, 0 /* freq hopping off */,
+                        0 /* 0 syms between hops */, false /* IQ not inverted */,
+                        3000 /* 3000 ms timeout */);
+    _radio->set_max_payload_length(MODEM_LORA, 8);
+}
+
+void LoRaStack::setup_rx(void) {
+    printf("\nsetting rx config\n");
+    _radio->set_channel(915000000);
+    _radio->set_rx_config(MODEM_LORA, 0 /* 125 kHz */, 8 /* 256 bps */,
+                        1 /* 4/5 */, 0 /* FSK only */, 0 /* 0 sym preamble */,
+                        1024 /* 1024 symbol timeout */,
+                        false /* variable len packets */, 0 /* n/a */,
+                        true /* CRC on */, 0 /* freq hopping off */,
+                        0 /* 0 syms between hops */, false /* IQ not inverted */,
+                        0 /* continuous rx */);
+    _radio->set_max_payload_length(MODEM_LORA, 8);
+}
+
 void LoRaStack::send_bs(void) { 
-    uint8_t buf[6] = "urmom";
-    _radio->send(buf, 6);
+    uint8_t buf[8] = "urmom!!";
+    _radio->send(buf, 8);
+}
+
+void LoRaStack::receive(void) { 
+    _radio->receive();
 }
 
 void LoRaStack::send_cont_wave(void) {

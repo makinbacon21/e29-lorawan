@@ -67,7 +67,10 @@ public:
     LoRaStack();
 
     uint8_t get_radio_status(void);
+    void setup_tx(void);
+    void setup_rx(void);
     void send_bs(void);
+    void receive(void);
     void send_cont_wave(void);
 
     void lock(void)
