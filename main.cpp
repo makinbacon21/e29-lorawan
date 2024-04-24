@@ -8,6 +8,12 @@
 
 #include "lorastack.h"
 #include "trace_helper.h"
+#include "DHT.h"
+
+#define DHTPIN D3
+#define DHTTYPE DHT11
+
+DHT sensor(DHTPIN, DHT::DHT11); 
 
 int main(void) {
     setup_trace();
@@ -16,11 +22,17 @@ int main(void) {
 
     LoRaStack *stack = new LoRaStack();
 
-    stack->setup_rx();
+    //stack->setup_rx();
 
-    //stack->setup_tx();
+    stack->setup_tx();
 
     while (1) {
+        int err = sensor.read();
+          if (err == DHT::SUCCESS) {
+              printf("T: %.1f\r\n", sensor.getTemperature(DHT::CELCIUS));
+          } else {
+              printf("Error code : %d\r\n", err);
+          }
         // printf("STATUS: ");
         // switch (stack->get_radio_status()) {
         // case 0:
@@ -35,8 +47,8 @@ int main(void) {
         // }
 
         // stack->send_cont_wave(); //0.5s
-        //stack->send_bs();
-        stack->receive();
+        stack->send_bs();
+        //stack->receive();
 
         ThisThread::sleep_for(3s);
     }
