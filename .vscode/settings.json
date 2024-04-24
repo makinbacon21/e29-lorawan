@@ -23,6 +23,13 @@
         "vector": "cpp",
         "mstd_iterator": "cpp",
         "ranges": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "chrono": "cpp",
+        "thread": "cpp",
+        "__mutex_base": "cpp",
+        "memory": "cpp",
+        "mutex": "cpp",
+        "mstd_mutex": "cpp",
+        "shared_mutex": "cpp"
     }
 }
