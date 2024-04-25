@@ -52,8 +52,6 @@ int main(void) {
 
     LoRaStack *stack = new LoRaStack();
 
-    // stack->setup_rx();
-
     stack->setup_tx();
 
     char sendBuf[128];
@@ -81,7 +79,6 @@ int main(void) {
 
         snprintf(sendBuf, 128, "%.1f,%.1f,%.1f", temp, humidity, pressure);
         stack->send(sendBuf);
-        // stack->receive();
 
         ThisThread::sleep_for(10s);
     }
