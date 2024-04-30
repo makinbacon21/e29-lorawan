@@ -27,8 +27,6 @@ SPDX-License-Identifier: BSD-3-Clause
 
 #include "lorastack.h"
 
-#include "lorawan/lorastack/phy/LoRaPHYUS915.h"
-
 #include "lora_radio_helper.h"
 
 LoRaStack::LoRaStack() {
@@ -134,11 +132,11 @@ void LoRaStack::setup_rx(void) {
     _radio->set_channel(915000000);
     _radio->set_rx_config(MODEM_LORA, 0 /* 125 kHz */, 8 /* 256 bps */,
                         1 /* 4/5 */, 0 /* FSK only */, 2 /* 2 sym preamble */,
-                        16 /* 16 symbol timeout */,
+                        1024 /* 1024 symbol timeout */,
                         false /* variable len packets */, 0 /* n/a */,
                         true /* CRC on */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
-                        0 /* continuous rx */);
+                        1 /* continuous rx */);
     _radio->set_max_payload_length(MODEM_LORA, 128);
 }
 
