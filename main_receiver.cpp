@@ -24,7 +24,7 @@ int main(void) {
     t.start();
     while (1) {
         current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
-        if((current_time - last_time) >= 1000) {
+        if((current_time - last_time) >= 500) {
             stack->receive();
             last_time = current_time;
         }
