@@ -55,6 +55,7 @@ int main(void) {
     LoRaStack *stack = new LoRaStack();
 
     LowPowerTimer t;
+    long current_time = 0, last_time = 0;
 
     stack->setup_tx();
 
@@ -75,7 +76,6 @@ int main(void) {
     };
 
     thread.start(polling_thread);
-
     t.start();
     while (1) {
 
@@ -105,8 +105,10 @@ int main(void) {
         //     i++;
         // }
         // sendBuf[i] = '\0';
-        if((std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count() % 10000) == 0) {
+        current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
+        if((current_time - last_time) >= 10000) {
             stack->send(sendBuf);
+            last_time = current_time;
         }
     }
     return 0;

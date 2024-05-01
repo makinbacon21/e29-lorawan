@@ -66,6 +66,7 @@ void LoRaStack::tx_interrupt_handler(void) {
 
 void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
                                      int16_t rssi, int8_t snr) {
+    printf("RX_RECEIVED\n");
     //char _rx_payload[8];
     /*if (size > sizeof _rx_payload) {
         return;
@@ -85,8 +86,8 @@ void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
     // (void)ret;
 
     // TODO: check and fix payload formatter--maybe pad to int?
-    printf("\n PAYLOAD RECEIVED: payload <%s> size<%d> rssi <%d> snr<%d>\n",
-           payload, size, rssi, snr);
+    //printf("\n PAYLOAD RECEIVED: payload <%s> size<%d> rssi <%d> snr<%d>\n",
+    //       payload, size, rssi, snr);
 }
 
 void LoRaStack::rx_error_interrupt_handler(void) {

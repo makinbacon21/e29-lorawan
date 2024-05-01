@@ -17,13 +17,16 @@ int main(void) {
     LoRaStack *stack = new LoRaStack();
 
     LowPowerTimer t;
+    long current_time = 0, last_time = 0;
 
     stack->setup_rx();
 
     t.start();
     while (1) {
-        if((std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count() % 1000) == 0) {
+        current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
+        if((current_time - last_time) >= 1000) {
             stack->receive();
+            last_time = current_time;
         }
     }
 
