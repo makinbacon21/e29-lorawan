@@ -30,6 +30,7 @@
         "memory": "cpp",
         "mutex": "cpp",
         "mstd_mutex": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "__threading_support": "cpp"
     }
 }

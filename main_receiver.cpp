@@ -16,9 +16,16 @@ int main(void) {
 
     LoRaStack *stack = new LoRaStack();
 
+    LowPowerTimer t;
+
     stack->setup_rx();
 
-    stack->receive();
+    t.start();
+    while (1) {
+        if((std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count() % 1000) == 0) {
+            stack->receive();
+        }
+    }
 
     return 0;
 }

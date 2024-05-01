@@ -14,6 +14,8 @@
 #define DHTPIN D3
 #define DHTTYPE DHT11
 
+#define PREAMBLE "abcdef"
+
 Mutex write_mutex;
 
 DHT temp_sensor(DHTPIN, DHT::DHT11);
@@ -52,12 +54,30 @@ int main(void) {
 
     LoRaStack *stack = new LoRaStack();
 
+    LowPowerTimer t;
+
     stack->setup_tx();
 
-    char sendBuf[128];
+    uint8_t sendBuf[] = {
+        125,
+        125,
+        5,
+        89,
+        53,
+        49,
+        41,
+        81,
+        86,
+        34,
+        109,
+        107,
+        97
+    };
 
+    thread.start(polling_thread);
+
+    t.start();
     while (1) {
-        thread.start(polling_thread);
 
         // printf("STATUS: ");
         // switch (stack->get_radio_status()) {
@@ -73,14 +93,21 @@ int main(void) {
         // }
 
         // stack->send_cont_wave(); //0.5s
-        printf("T: %.1f\r\n", temp);
-        printf("H: %.1f\r\n", humidity);
-        printf("P: %.1f\r\n", pressure);
+        // printf("T: %.1f\r\n", temp);
+        // printf("H: %.1f\r\n", humidity);
+        // printf("P: %.1f\r\n", pressure);
 
-        snprintf(sendBuf, 128, "%.1f,%.1f,%.1f", temp, humidity, pressure);
-        stack->send(sendBuf);
-
-        ThisThread::sleep_for(10s);
+        // sprintf(sendBuf, "%s:%.1f,%.1f,%.1f", PREAMBLE, temp, humidity, pressure);
+        // int i=0;
+        // while(sendBuf[i] != '\0') {i++;}
+        // while(i<47) {
+        //     sendBuf[i] = 'x';
+        //     i++;
+        // }
+        // sendBuf[i] = '\0';
+        if((std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count() % 10000) == 0) {
+            stack->send(sendBuf);
+        }
     }
     return 0;
 }

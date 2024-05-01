@@ -69,7 +69,7 @@ public:
     uint8_t get_radio_status(void);
     void setup_tx(void);
     void setup_rx(void);
-    void send(char *buf);
+    void send(uint8_t *buf);
     void send_bs(void);
     void receive(void);
     void send_cont_wave(void);

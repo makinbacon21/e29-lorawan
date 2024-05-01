@@ -106,7 +106,7 @@ void LoRaStack::tx_timeout_interrupt_handler(void) {
 }
 
 void LoRaStack::rx_timeout_interrupt_handler(void) {
-    printf("RX TIMED OUT\n");
+    // printf("RX TIMED OUT\n");
     // const int ret =
     //     _queue->call(this, &LoRaStack::process_reception_timeout, true);
     // MBED_ASSERT(ret != 0);
@@ -120,34 +120,34 @@ void LoRaStack::setup_tx(void) {
     _radio->set_channel(915000000);
     _radio->set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
                         0 /* 125 kHz */, 8 /* 256 bps */, 1 /* 4/5 */,
-                        2 /* 2 sym preamble */, false /* variable len packets */,
-                        true /* CRC on */, 0 /* freq hopping off */,
+                        8 /* 8 sym preamble */, true /* fixed len packets */,
+                        false /* CRC off */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
                         3000 /* 3000 ms timeout */);
-    _radio->set_max_payload_length(MODEM_LORA, 128);
+    _radio->set_max_payload_length(MODEM_LORA, 13);
 }
 
 void LoRaStack::setup_rx(void) {
     printf("\nsetting rx config\n");
     _radio->set_channel(915000000);
     _radio->set_rx_config(MODEM_LORA, 0 /* 125 kHz */, 8 /* 256 bps */,
-                        1 /* 4/5 */, 0 /* FSK only */, 2 /* 2 sym preamble */,
+                        1 /* 4/5 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
                         1024 /* 1024 symbol timeout */,
-                        false /* variable len packets */, 0 /* n/a */,
-                        true /* CRC on */, 0 /* freq hopping off */,
+                        true /* fixed len packets */, 0 /* n/a */,
+                        false /* CRC off */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
-                        1 /* continuous rx */);
-    _radio->set_max_payload_length(MODEM_LORA, 128);
+                        0 /* not continuous rx */);
+    _radio->set_max_payload_length(MODEM_LORA, 13);
 }
 
-void LoRaStack::send(char *buf) {
-    uint8_t buffer[128];
-    for(int i=0; i<128; i++) {
-        buffer[i] = buf[i];
-        if(buf[i] == '\0')
-            break;
-    }
-    _radio->send(buffer, strlen(buf));
+void LoRaStack::send(uint8_t *buf) {
+    // uint8_t buffer[128];
+    // for(int i=0; i<128; i++) {
+    //     buffer[i] = buf[i];
+    //     if(buf[i] == '\0')
+    //         break;
+    // }
+    _radio->send(buf, 13);
 }
 
 void LoRaStack::send_bs(void) { 

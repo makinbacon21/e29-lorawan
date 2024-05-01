@@ -22,7 +22,8 @@
             "sx1276-lora-driver.txctl":          "ARDUINO_UNO_D9",
             "sx1276-lora-driver.rxctl":          "ARDUINO_UNO_D8",
             "sx1276-lora-driver.dio0":           "ARDUINO_UNO_D7",
-            "sx1276-lora-driver.dio1":           "ARDUINO_UNO_D6"
+            "sx1276-lora-driver.dio1":           "ARDUINO_UNO_D6",
+            "sx1276-lora-driver.dio4":           "ARDUINO_UNO_D4"
         }
     }
 }
