@@ -14,7 +14,7 @@
 #define DHTPIN D3
 #define DHTTYPE DHT11
 
-#define PREAMBLE "abcdef"
+#define PREAMBLE "wthrstn1"
 
 Mutex write_mutex;
 
@@ -59,21 +59,23 @@ int main(void) {
 
     stack->setup_tx();
 
-    uint8_t sendBuf[] = {
-        125,
-        125,
-        5,
-        89,
-        53,
-        49,
-        41,
-        81,
-        86,
-        34,
-        109,
-        107,
-        97
-    };
+    // uint8_t sendBuf[] = {
+    //     125,
+    //     125,
+    //     5,
+    //     89,
+    //     53,
+    //     49,
+    //     41,
+    //     81,
+    //     86,
+    //     34,
+    //     109,
+    //     107,
+    //     97
+    // };
+
+    char sendBuf[48];
 
     thread.start(polling_thread);
     t.start();
@@ -97,14 +99,8 @@ int main(void) {
         // printf("H: %.1f\r\n", humidity);
         // printf("P: %.1f\r\n", pressure);
 
-        // sprintf(sendBuf, "%s:%.1f,%.1f,%.1f", PREAMBLE, temp, humidity, pressure);
-        // int i=0;
-        // while(sendBuf[i] != '\0') {i++;}
-        // while(i<47) {
-        //     sendBuf[i] = 'x';
-        //     i++;
-        // }
-        // sendBuf[i] = '\0';
+        snprintf(sendBuf, 48, "%s: <%.1f> <%.1f> <%.1f>", PREAMBLE, temp, humidity, pressure);
+
         current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
         if((current_time - last_time) >= 10000) {
             stack->send(sendBuf);

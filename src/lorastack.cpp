@@ -66,17 +66,14 @@ void LoRaStack::tx_interrupt_handler(void) {
 
 void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
                                      int16_t rssi, int8_t snr) {
-    //printf("RX_RECEIVED\n");
-    //char _rx_payload[8];
-    /*if (size > sizeof _rx_payload) {
+    printf("RX_RECEIVED: rssi <%d> snr <%d>\n", rssi, snr);
+    char _rx_payload[48];
+    if (size > sizeof _rx_payload) {
+        printf("ERROR! Packet too big.\n");
         return;
-    }*/
+    }
 
-    //if(size < 8) {
-      //  return;
-    //}
-
-    //memcpy(_rx_payload, payload, size);
+    memcpy(_rx_payload, payload, size);
 
     // const uint8_t *ptr = _rx_payload;
     // const int ret =
@@ -86,12 +83,14 @@ void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
     // (void)ret;
 
     // TODO: check and fix payload formatter--maybe pad to int?
-    printf("\n PAYLOAD RECEIVED: payload < ");
-    for(int i=0l; i<size; i++) {
-        printf("%d ", payload[i]);
-    }
-    printf(" > size<%d> rssi <%d> snr<%d>\n",
-           size, rssi, snr);
+    // printf("\n PAYLOAD RECEIVED: payload < ");
+    // for(int i=0l; i<size; i++) {
+    //     printf("%d ", payload[i]);
+    // }
+    // printf(" > size<%d> rssi <%d> snr<%d>\n",
+    //        size, rssi, snr);
+
+    printf("%s\n", _rx_payload);
 }
 
 void LoRaStack::rx_error_interrupt_handler(void) {
@@ -124,9 +123,9 @@ void LoRaStack::setup_tx(void) {
     printf("\nsetting tx config\n");
     _radio->set_channel(915000000);
     _radio->set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
-                        0 /* 125 kHz */, 8 /* 256 bps */, 1 /* 4/5 */,
+                        2 /* 500 kHz */, 8 /* bps */, 3 /* 4/5 */,
                         8 /* 8 sym preamble */, false /* var len packets */,
-                        true /* CRC off */, 0 /* freq hopping off */,
+                        true /* CRC on */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
                         3000 /* 3000 ms timeout */);
     _radio->set_max_payload_length(MODEM_LORA, 48);
@@ -135,24 +134,25 @@ void LoRaStack::setup_tx(void) {
 void LoRaStack::setup_rx(void) {
     printf("\nsetting rx config\n");
     _radio->set_channel(915000000);
-    _radio->set_rx_config(MODEM_LORA, 0 /* 125 kHz */, 8 /* 256 bps */,
-                        1 /* 4/5 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
+    _radio->set_rx_config(MODEM_LORA, 2 /* 500 kHz */, 8 /*  bps */,
+                        3 /* 4/5 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
                         1024 /* 1024 symbol timeout */,
                         false /* var len packets */, 0 /* n/a */,
-                        true /* CRC off */, 0 /* freq hopping off */,
+                        true /* CRC on */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
                         1 /* continuous rx */);
     _radio->set_max_payload_length(MODEM_LORA, 48);
 }
 
-void LoRaStack::send(uint8_t *buf) {
-    // uint8_t buffer[128];
-    // for(int i=0; i<128; i++) {
-    //     buffer[i] = buf[i];
-    //     if(buf[i] == '\0')
-    //         break;
-    // }
-    _radio->send(buf, 13);
+void LoRaStack::send(char *buf) {
+    uint8_t buffer[48];
+    int i;
+    for(i=0; i<48; i++) {
+        buffer[i] = buf[i];
+        if(buf[i] == '\0')
+            break;
+    }
+    _radio->send(buffer, i);
 }
 
 void LoRaStack::send_bs(void) { 
