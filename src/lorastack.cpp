@@ -53,6 +53,21 @@ LoRaStack::LoRaStack() {
     printf("\n radio initialized! \n");
 }
 
+LoRaStack::LoRaStack(radio_events_t radio_events) {
+    _radio = &radio;
+
+    this->radio_events = radio_events;
+
+    printf("\nsetting up radio events\n");
+
+    radio.lock();
+    // actual initialization of the radio driver with the radio_events_t
+    radio.init_radio(&(this->radio_events));
+    radio.unlock();
+
+    printf("\n radio initialized! \n");
+}
+
 /*****************************************************************************
  * Interrupt handlers                                                        *
  ****************************************************************************/
@@ -74,21 +89,6 @@ void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
     }
 
     memcpy(_rx_payload, payload, size);
-
-    // const uint8_t *ptr = _rx_payload;
-    // const int ret =
-    //     _queue->call(this, &LoRaStack::process_reception, ptr, size, rssi,
-    //     snr);
-    // MBED_ASSERT(ret != 0);
-    // (void)ret;
-
-    // TODO: check and fix payload formatter--maybe pad to int?
-    // printf("\n PAYLOAD RECEIVED: payload < ");
-    // for(int i=0l; i<size; i++) {
-    //     printf("%d ", payload[i]);
-    // }
-    // printf(" > size<%d> rssi <%d> snr<%d>\n",
-    //        size, rssi, snr);
 
     printf("%s\n", _rx_payload);
 }

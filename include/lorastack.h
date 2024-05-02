@@ -65,6 +65,7 @@ class LoRaStack: private mbed::NonCopyable<LoRaStack> {
 
 public:
     LoRaStack();
+    LoRaStack(radio_events_t radio_events);
 
     uint8_t get_radio_status(void);
     void setup_tx(void);

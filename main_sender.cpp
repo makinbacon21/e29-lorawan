@@ -99,7 +99,7 @@ int main(void) {
         // printf("H: %.1f\r\n", humidity);
         // printf("P: %.1f\r\n", pressure);
 
-        snprintf(sendBuf, 48, "%s: <%.1f> <%.1f> <%.1f>", PREAMBLE, temp, humidity, pressure);
+        snprintf(sendBuf, 48, "%s: <%.1f> <%.1f> <%.1f>\r\n", PREAMBLE, temp, humidity, pressure);
 
         current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
         if((current_time - last_time) >= 10000) {
