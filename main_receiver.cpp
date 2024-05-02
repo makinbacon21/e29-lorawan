@@ -26,12 +26,15 @@ void rx_interrupt_handler(const uint8_t *payload, uint16_t size,
 
     memcpy(_rx_payload, payload, size);
 
+    // extract vals from payload
     sscanf(_rx_payload, "wthrstn1: <%f> <%f> <%f>\r\n", &temp, &humidity, &pressure);
     printf("%f %f %f\n", temp, humidity, pressure);
 
+    // format lcd str
     snprintf(text_scan[0], LCD_COLS, "T:%.1fF H:%.1f%%", temp, humidity);
     snprintf(text_scan[1], LCD_COLS, "P:%.1fhPa", pressure);
 
+    // c str to cpp str
     text[0] = std::string(text_scan[0]);
     text[1] = std::string(text_scan[1]);
 
@@ -59,9 +62,10 @@ int main(void) {
 
     t.start();
     while (1) {
+        // allow sleeping by timing with lowpowertimer
         current_time = std::chrono::duration_cast<std::chrono::milliseconds>(t.elapsed_time()).count();
         if((current_time - last_time) >= 500) {
-            stack->receive();
+            stack->receive(); // continuous?
             last_time = current_time;
         }
     }

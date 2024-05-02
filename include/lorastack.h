@@ -75,15 +75,6 @@ public:
     void receive(void);
     void send_cont_wave(void);
 
-    void lock(void)
-    {
-        _loramac.lock();
-    }
-    void unlock(void)
-    {
-        _loramac.unlock();
-    }
-
 private:
     typedef mbed::ScopedLock<LoRaStack> Lock;
 
@@ -92,8 +83,6 @@ private:
      */
     void tx_interrupt_handler(void);
     void tx_timeout_interrupt_handler(void);
-    void process_transmission(void);
-    void process_transmission_timeout(void);
 
     /**
      * RX interrupt handlers and corresponding processors
@@ -102,16 +91,10 @@ private:
                               int8_t snr);
     void rx_timeout_interrupt_handler(void);
     void rx_error_interrupt_handler(void);
-    void process_reception(const uint8_t *payload, uint16_t size, int16_t rssi,
-                           int8_t snr);
-    void process_reception_timeout(bool is_timeout);
 
 private:
-    LoRaMac _loramac;
     radio_events_t radio_events;
-    device_states_t _device_current_state;
     LoRaRadio *_radio;
-    LoRaPHY *_default_phy;
 };
 
 #endif /* LORASTACK_H_ */

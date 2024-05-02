@@ -72,10 +72,6 @@ LoRaStack::LoRaStack(radio_events_t radio_events) {
  * Interrupt handlers                                                        *
  ****************************************************************************/
 void LoRaStack::tx_interrupt_handler(void) {
-    // _tx_timestamp = _loramac.get_current_time();
-    // const int ret = _queue->call(this, &LoRaStack::process_transmission);
-    // MBED_ASSERT(ret != 0);
-    // (void)ret;
     printf("TX DONE\n");
 }
 
@@ -94,27 +90,15 @@ void LoRaStack::rx_interrupt_handler(const uint8_t *payload, uint16_t size,
 }
 
 void LoRaStack::rx_error_interrupt_handler(void) {
-    // const int ret =
-    //     _queue->call(this, &LoRaStack::process_reception_timeout, false);
-    // MBED_ASSERT(ret != 0);
-    // (void)ret;
     printf("RX ERROR\n");
 }
 
 void LoRaStack::tx_timeout_interrupt_handler(void) {
-    // const int ret =
-    //     _queue->call(this, &LoRaStack::process_transmission_timeout);
-    // MBED_ASSERT(ret != 0);
-    // (void)ret;
     printf("TX TIMED OUT\n");
 }
 
 void LoRaStack::rx_timeout_interrupt_handler(void) {
     // printf("RX TIMED OUT\n");
-    // const int ret =
-    //     _queue->call(this, &LoRaStack::process_reception_timeout, true);
-    // MBED_ASSERT(ret != 0);
-    // (void)ret;
 }
 
 uint8_t LoRaStack::get_radio_status(void) { return _radio->get_status(); }
@@ -123,7 +107,7 @@ void LoRaStack::setup_tx(void) {
     printf("\nsetting tx config\n");
     _radio->set_channel(915000000);
     _radio->set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
-                        2 /* 500 kHz */, 8 /* bps */, 3 /* 4/5 */,
+                        2 /* 500 kHz */, 8 /* 256 bps */, 3 /* 4/5 */,
                         8 /* 8 sym preamble */, false /* var len packets */,
                         true /* CRC on */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
@@ -134,7 +118,7 @@ void LoRaStack::setup_tx(void) {
 void LoRaStack::setup_rx(void) {
     printf("\nsetting rx config\n");
     _radio->set_channel(915000000);
-    _radio->set_rx_config(MODEM_LORA, 2 /* 500 kHz */, 8 /*  bps */,
+    _radio->set_rx_config(MODEM_LORA, 2 /* 500 kHz */, 8 /* 256 bps */,
                         3 /* 4/5 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
                         1024 /* 1024 symbol timeout */,
                         false /* var len packets */, 0 /* n/a */,
