@@ -106,8 +106,8 @@ uint8_t LoRaStack::get_radio_status(void) { return _radio->get_status(); }
 void LoRaStack::setup_tx(void) {
     printf("\nsetting tx config\n");
     _radio->set_channel(915000000);
-    _radio->set_tx_config(MODEM_LORA, 30 /* 30 dBm/1 W power */, 0 /* fsk only */,
-                        2 /* 500 kHz */, 8 /* 256 bps */, 3 /* 4/5 */,
+    _radio->set_tx_config(MODEM_LORA, 20 /* 20 dBm/1 W power */, 0 /* fsk only */,
+                        0 /* 125 kHz */, 9 /* 512 chirps */, 4 /* 4/8 */,
                         8 /* 8 sym preamble */, false /* var len packets */,
                         true /* CRC on */, 0 /* freq hopping off */,
                         0 /* 0 syms between hops */, false /* IQ not inverted */,
@@ -118,8 +118,8 @@ void LoRaStack::setup_tx(void) {
 void LoRaStack::setup_rx(void) {
     printf("\nsetting rx config\n");
     _radio->set_channel(915000000);
-    _radio->set_rx_config(MODEM_LORA, 2 /* 500 kHz */, 8 /* 256 bps */,
-                        3 /* 4/5 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
+    _radio->set_rx_config(MODEM_LORA, 0 /* 125 kHz */, 9 /* 512 chirps */,
+                        4 /* 4/8 */, 0 /* FSK only */, 8 /* 8 sym preamble */,
                         1024 /* 1024 symbol timeout */,
                         false /* var len packets */, 0 /* n/a */,
                         true /* CRC on */, 0 /* freq hopping off */,
